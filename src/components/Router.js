@@ -1,27 +1,28 @@
-import React, { useState } from "react";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
+import Profile from "routes/Profile";
+import Navigation from "components/Navigation";
 
-const AppRouter = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+const AppRouter = ( { isLoggedIn, userObj } ) => {
 
     return (
-        <Router>
-            <Switch>
-                {isLoggedIn ?  (
-                    <>
-                        <Route exact path="/">
-                            <Home />
-                        </Route> 
-                    </> 
-                ) : (
-                    <Route exact path="/">
-                        <Auth />
-                    </Route>
-                )}
-            </Switch>
-        </Router>
+        <BrowserRouter>
+            {isLoggedIn && <Navigation />}
+            <Routes>
+                    {isLoggedIn ?  (
+                        <>
+                            <Route path="/" element={<Home userObj={userObj} />} />
+                            <Route path="/profile" element={<Profile />} /> 
+                        </>
+                    ) : (
+                        <>
+                            <Route path="/" element={<Auth />} />
+                        </>
+                    )}
+                <Route path="*" element={<Navigate replace to="/" />} />
+            </Routes>
+        </BrowserRouter>
     );
 };
 
