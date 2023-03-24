@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
-import { dbService } from "fbase";
-import { async } from '@firebase/util';
+import { ref, deleteObject } from "firebase/storage";
+import { dbService, storageService } from "fbase";
+
 
 const Nweet = ({ nweetObj, isOwner }) => {
     const [editing, setEditing] = useState(false);
@@ -11,6 +12,8 @@ const Nweet = ({ nweetObj, isOwner }) => {
         const ok = window.confirm("정말 삭제하시겠습니까?");
         if(ok) {
             await deleteDoc(doc(dbService, `nweets/${nweetObj.id}`));
+            const desertRef = ref(storageService, nweetObj.attachmentUrl);
+            await deleteObject(desertRef);
         }
     }
 
@@ -56,6 +59,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
                     : 
                     <>
                         <h4>{nweetObj.text}</h4>
+                        {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl} alt="" width="50px" height="50px" />}
                         {isOwner && ( 
                         <>
                             <button onClick={toggleEditing}>수정하기</button>
